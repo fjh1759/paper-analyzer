@@ -1,0 +1,16 @@
+{
+  "name": "paper-analyzer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate:analysis": "node analysis/scripts/validate-analysis.mjs",
+    "test:analysis": "node tests/analysis.test.mjs",
+    "test:paper-analyzer": "node tests/paper-analyzer.test.mjs",
+    "test:paper-analyzer:pdf": "python -B -X utf8 -m unittest discover -s tests -p test_paper_analyzer.py"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchflow.local/analysis/schema/paper-analysis-1.0.0.schema.json",
+  "title": "ResearchFlow Paper Analysis 1.0.0",
+  "description": "一份文档对应一篇论文的结构化分析。原文证据、核验结论与推断来源分别记录；结构校验通过不代表学术事实正确。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "analysisId", "isExample", "paper", "sourceDocument", "analysis", "notes", "provenance", "createdAt", "updatedAt"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference", "description": "可选的编辑器 Schema 提示；校验器始终使用本地受信 Schema，不按此字段加载网络资源。" },
+    "schemaVersion": { "const": "1.0.0" },
+    "analysisId": { "$ref": "#/$defs/id" },
+    "isExample": { "type": "boolean", "description": "演示数据必须为 true，不能据此作为真实文献证据。" },
+    "paper": { "$ref": "#/$defs/paper" },
+    "sourceDocument": { "anyOf": [{ "$ref": "#/$defs/sourceDocument" }, { "type": "null" }] },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["methods", "metrics", "limitations"],
+      "properties": {
+        "methods": { "type": "array", "maxItems": 200, "items": { "$ref": "#/$defs/method" } },
+        "metrics": { "type": "array", "maxItems": 200, "items": { "$ref": "#/$defs/metric" } },
+        "limitations": { "type": "array", "maxItems": 200, "items": { "$ref": "#/$defs/limitation" } }
+      }
+    },
+    "notes": { "type": "array", "maxItems": 200, "items": { "$ref": "#/$defs/note" }, "description": "用户笔记独立于分析结论；未来导入不能默认覆盖已有笔记。" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [{
+    "if": { "properties": { "provenance": { "type": "object", "properties": { "kind": { "const": "example" } }, "required": ["kind"] } } },
+    "then": { "properties": { "isExample": { "const": true } } }
+  }],
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$" },
+    "shortText": { "type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S" },
+    "longText": { "type": "string", "minLength": 1, "maxLength": 20000, "pattern": "\\S" },
+    "optionalText": { "type": "string", "maxLength": 20000 },
+    "nullableText": { "anyOf": [{ "$ref": "#/$defs/shortText" }, { "type": "null" }] },
+    "textList": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/longText" } },
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "authors", "year", "venue", "keywords"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id", "description": "对应现有文献 ID，不使用标题或 DOI 替代已有 ID。" },
+        "title": { "$ref": "#/$defs/shortText" },
+        "authors": { "$ref": "#/$defs/shortText", "description": "保留现有作者展示字符串；完整名单可另填 fullAuthors。" },
+        "fullAuthors": { "$ref": "#/$defs/optionalText" },
+        "year": { "type": "string", "pattern": "^(|[12][0-9]{3})$", "description": "保留现有字符串类型，空字符串表示未知年份。" },
+        "venue": { "type": "string", "maxLength": 1000 },
+        "shortVenue": { "type": "string", "maxLength": 500 },
+        "doi": { "type": "string", "maxLength": 500, "pattern": "^(|10\\.[0-9]{4,9}/\\S+)$", "description": "裸 DOI，不加 https://doi.org/；未知时留空或省略。" },
+        "keywords": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 100, "pattern": "\\S" } },
+        "summary": { "$ref": "#/$defs/optionalText" },
+        "researchField": { "type": "string", "maxLength": 500 },
+        "researchTasks": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/shortText" } }
+      }
+    },
+    "sourceDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fileName", "sha256", "pageCount", "url"],
+      "properties": {
+        "fileName": { "$ref": "#/$defs/shortText", "description": "仅文件名，不存本机完整路径。" },
+        "sha256": { "type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$" },
+        "pageCount": { "type": ["integer", "null"], "minimum": 1 },
+        "url": { "type": ["string", "null"], "format": "uri", "pattern": "^https?://" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfPage", "printedPage", "section", "locator"],
+      "properties": {
+        "pdfPage": { "type": ["integer", "null"], "minimum": 1, "description": "从 1 开始的 PDF 文件物理页码；不是从 0 开始的索引。未知时为 null。" },
+        "printedPage": { "$ref": "#/$defs/nullableText", "description": "论文印刷页码，可使用 ii、S3 等标签；未知为 null。" },
+        "section": { "$ref": "#/$defs/nullableText" },
+        "locator": { "$ref": "#/$defs/nullableText", "description": "进一步定位到表格、图、公式或段落，例如 Table 2, row 3。" }
+      }
+    },
+    "knownPage": {
+      "type": "object",
+      "anyOf": [
+        { "properties": { "pdfPage": { "type": "integer", "minimum": 1 } }, "required": ["pdfPage"] },
+        { "properties": { "printedPage": { "$ref": "#/$defs/shortText" } }, "required": ["printedPage"] }
+      ]
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewedBy", "reviewedAt", "note"],
+      "properties": {
+        "status": { "enum": ["unverified", "needs_review", "verified", "rejected"], "description": "未核验 / 待复核 / 已人工核验 / 已否定。导入成功不能自动提升核验状态。" },
+        "reviewedBy": { "$ref": "#/$defs/nullableText" },
+        "reviewedAt": { "type": ["string", "null"], "format": "date-time" },
+        "note": { "$ref": "#/$defs/optionalText" }
+      },
+      "allOf": [{
+        "if": { "properties": { "status": { "enum": ["verified", "rejected"] } } },
+        "then": { "properties": { "reviewedBy": { "$ref": "#/$defs/shortText" }, "reviewedAt": { "type": "string", "format": "date-time" } } }
+      }]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "quote", "relation", "location", "verification"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "quote": { "$ref": "#/$defs/longText", "description": "原文逐字摘录，不把中文总结、改写或 AI 推理当作原文。" },
+        "relation": { "enum": ["direct_support", "context"], "description": "直接支持当前陈述，或仅作为推断的上下文。上下文不证明作者明确提出了该缺陷。" },
+        "location": { "$ref": "#/$defs/location" },
+        "verification": { "$ref": "#/$defs/verification" }
+      },
+      "allOf": [{
+        "if": { "properties": { "verification": { "type": "object", "properties": { "status": { "const": "verified" } }, "required": ["status"] } } },
+        "then": { "properties": { "location": { "$ref": "#/$defs/knownPage" } } }
+      }]
+    },
+    "reviewable": {
+      "type": "object",
+      "required": ["id", "evidence", "verification"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "evidence": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/evidence" }, "description": "没有原文证据时使用空数组，不能伪造引文或页码。" },
+        "verification": { "$ref": "#/$defs/verification" }
+      },
+      "allOf": [{
+        "if": { "properties": { "verification": { "type": "object", "properties": { "status": { "const": "verified" } }, "required": ["status"] } } },
+        "then": { "properties": { "evidence": { "type": "array", "minItems": 1, "items": { "type": "object", "properties": { "verification": { "type": "object", "properties": { "status": { "const": "verified" } }, "required": ["status"] } } } } } }
+      }]
+    },
+    "method": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/reviewable" }],
+      "unevaluatedProperties": false,
+      "required": ["name", "category", "principle", "steps", "innovations"],
+      "properties": {
+        "name": { "$ref": "#/$defs/shortText" },
+        "category": { "$ref": "#/$defs/shortText" },
+        "principle": { "$ref": "#/$defs/longText" },
+        "steps": { "$ref": "#/$defs/textList" },
+        "innovations": { "$ref": "#/$defs/textList" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/reviewable" }],
+      "unevaluatedProperties": false,
+      "required": ["name", "dataset", "result", "baseline", "description", "higher"],
+      "properties": {
+        "name": { "$ref": "#/$defs/shortText" },
+        "dataset": { "$ref": "#/$defs/shortText" },
+        "result": { "$ref": "#/$defs/shortText", "description": "保留展示字符串，可表达区间、单位及科学记数法，避免把缺失值伪装成 0。" },
+        "baseline": { "type": "string", "maxLength": 500, "description": "与现有 Metric.baseline 兼容；没有对比基线时为空字符串。" },
+        "description": { "$ref": "#/$defs/optionalText" },
+        "higher": { "type": "boolean", "description": "true 越高越好，false 越低越好；与现有 Metric.higher 保持一致。" },
+        "task": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "#/$defs/reviewable" },
+        {
+          "if": { "properties": { "sourceType": { "const": "author_stated" } } },
+          "then": { "properties": {
+            "reasoning": { "type": "null" },
+            "evidence": { "type": "array", "minItems": 1, "contains": { "type": "object", "properties": { "relation": { "const": "direct_support" } }, "required": ["relation"] } }
+          } },
+          "else": { "properties": {
+            "reasoning": { "$ref": "#/$defs/longText" },
+            "evidence": { "type": "array", "items": { "type": "object", "properties": { "relation": { "const": "context" } }, "required": ["relation"] } }
+          } }
+        }
+      ],
+      "unevaluatedProperties": false,
+      "required": ["description", "sourceType", "source", "impact", "improvement", "reasoning"],
+      "properties": {
+        "description": { "$ref": "#/$defs/longText" },
+        "sourceType": { "enum": ["author_stated", "ai_inferred", "reader_inferred"], "description": "作者明确提出 / AI 推断 / 读者推断；核验状态不能改变此来源类别。" },
+        "source": { "$ref": "#/$defs/optionalText", "description": "兼容现有 Limitation.source 的来源说明；不替代 evidence 中的逐字证据。" },
+        "impact": { "$ref": "#/$defs/longText" },
+        "improvement": { "$ref": "#/$defs/longText" },
+        "reasoning": { "anyOf": [{ "$ref": "#/$defs/longText" }, { "type": "null" }], "description": "推断依据及不确定性；作者明确提出时为 null，推断时必须提供。" }
+      }
+    },
+    "note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "content", "format", "createdAt", "updatedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "content": { "$ref": "#/$defs/optionalText" },
+        "format": { "enum": ["plain_text", "markdown"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "generator", "model", "note"],
+      "properties": {
+        "kind": { "enum": ["human", "ai", "legacy_import", "example"], "description": "记录由谁整理；这与缺陷是否为作者原话是两个不同维度。" },
+        "generator": { "$ref": "#/$defs/nullableText" },
+        "model": { "$ref": "#/$defs/nullableText" },
+        "note": { "$ref": "#/$defs/optionalText" }
+      },
+      "allOf": [{ "if": { "properties": { "kind": { "const": "ai" } } }, "then": { "properties": { "model": { "$ref": "#/$defs/shortText" } } } }]
+    }
+  }
+}

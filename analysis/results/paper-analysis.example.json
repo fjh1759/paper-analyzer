@@ -1,0 +1,162 @@
+{
+  "$schema": "../schema/paper-analysis.schema.json",
+  "schemaVersion": "1.0.0",
+  "analysisId": "analysis-fictional-literature-discovery-v1",
+  "isExample": true,
+  "paper": {
+    "id": "fictional-literature-discovery",
+    "title": "Evidence-Aware Literature Discovery（虚构示例论文）",
+    "authors": "Example Research Group",
+    "fullAuthors": "虚构示例作者甲、虚构示例作者乙",
+    "year": "2026",
+    "venue": "ResearchFlow Demo Workshop（虚构）",
+    "shortVenue": "Demo Workshop",
+    "doi": "",
+    "keywords": ["文献检索", "图结构", "证据追溯"],
+    "summary": "这是测试数据契约的虚构论文。所有引文、页码、数值与核验人均为模拟内容，不代表真实研究或真实核验。",
+    "researchField": "科研信息管理",
+    "researchTasks": ["文献检索", "证据追溯"]
+  },
+  "sourceDocument": {
+    "fileName": "fictional-literature-discovery.pdf",
+    "sha256": null,
+    "pageCount": 8,
+    "url": null
+  },
+  "analysis": {
+    "methods": [
+      {
+        "id": "method-graph-retrieval",
+        "name": "引文图检索（示例）",
+        "category": "信息检索 / 图建模",
+        "principle": "利用论文的引用关系与关键词共同计算候选文献的相关程度。",
+        "steps": ["以论文为节点、引用为边构建图。", "结合关键词匹配生成候选集合。", "按图邻域相关程度重新排序。"],
+        "innovations": ["将引用关系用于候选文献排序。", "保留每个候选结果的解释线索。"],
+        "evidence": [{
+          "id": "evidence-graph-retrieval",
+          "quote": "【虚构原文】系统将引用关系与关键词匹配结合，对候选论文进行重新排序。",
+          "relation": "direct_support",
+          "location": { "pdfPage": 3, "printedPage": "3", "section": "3.1 检索方法", "locator": "第 2 段" },
+          "verification": { "status": "verified", "reviewedBy": "示例核验人（非真实核验）", "reviewedAt": "2026-10-31T02:00:00Z", "note": "仅演示已核验记录需要的字段。" }
+        }],
+        "verification": { "status": "verified", "reviewedBy": "示例核验人（非真实核验）", "reviewedAt": "2026-10-31T02:05:00Z", "note": "模拟条目，不能用于学术引用。" }
+      },
+      {
+        "id": "method-evidence-index",
+        "name": "证据位置索引（示例）",
+        "category": "可追溯性 / 文档索引",
+        "principle": "把分析条目与其对应的原文摘录、页码和段落位置关联。",
+        "steps": ["记录逐字摘录。", "记录 PDF 物理页码与印刷页码。", "为每条证据单独保存核验状态。"],
+        "innovations": ["把分析内容与证据定位分开保存。"],
+        "evidence": [{
+          "id": "evidence-evidence-index",
+          "quote": "【虚构原文】每条记录保留原文摘录与页码，以便读者检查来源。",
+          "relation": "direct_support",
+          "location": { "pdfPage": 4, "printedPage": "4", "section": "3.2 证据索引", "locator": null },
+          "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "示例：引文与页码尚待人工检查。" }
+        }],
+        "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "不能因存在引文就自动标为已核验。" }
+      }
+    ],
+    "metrics": [
+      {
+        "id": "metric-recall",
+        "name": "Recall@10",
+        "dataset": "Demo Literature Set（虚构）",
+        "result": "0.82",
+        "baseline": "0.71（关键词基线）",
+        "description": "前 10 个检索结果的召回率，数值均为虚构。",
+        "higher": true,
+        "task": "文献检索",
+        "evidence": [{
+          "id": "evidence-recall",
+          "quote": "【虚构表格】关键词基线 Recall@10 为 0.71，图检索方法为 0.82。",
+          "relation": "direct_support",
+          "location": { "pdfPage": 5, "printedPage": "5", "section": "4.1 实验结果", "locator": "Table 1，Recall@10 列" },
+          "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "待核对表格、数据集与数值。" }
+        }],
+        "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "仅示例，不是可引用的实验结果。" }
+      },
+      {
+        "id": "metric-latency",
+        "name": "检索延迟",
+        "dataset": "Demo Literature Set（虚构）",
+        "result": "120 ms",
+        "baseline": "150 ms（关键词基线）",
+        "description": "单次查询的模拟延迟；保留带单位的展示字符串。",
+        "higher": false,
+        "task": "文献检索",
+        "evidence": [{
+          "id": "evidence-latency",
+          "quote": "【虚构表格】本方法查询延迟为 120 ms，基线为 150 ms。",
+          "relation": "direct_support",
+          "location": { "pdfPage": 5, "printedPage": "5", "section": "4.1 实验结果", "locator": "Table 1，延迟列" },
+          "verification": { "status": "needs_review", "reviewedBy": null, "reviewedAt": null, "note": "需要检查计时条件是否一致。" }
+        }],
+        "verification": { "status": "needs_review", "reviewedBy": null, "reviewedAt": null, "note": "示例：表格值与实验设置需要共同检查。" }
+      }
+    ],
+    "limitations": [
+      {
+        "id": "limitation-author-domain",
+        "description": "作者明确说明：实验仅覆盖计算机科学领域（虚构示例）。",
+        "sourceType": "author_stated",
+        "source": "5.1 局限性（虚构章节）",
+        "impact": "无法据此判断其他学科的检索表现。",
+        "improvement": "增加跨学科数据集并分别报告实验结果。",
+        "reasoning": null,
+        "evidence": [{
+          "id": "evidence-author-domain",
+          "quote": "【虚构原文】本研究的实验仅覆盖计算机科学论文，尚未在其他学科上进行评估。",
+          "relation": "direct_support",
+          "location": { "pdfPage": 7, "printedPage": "7", "section": "5.1 局限性", "locator": "第 1 段" },
+          "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "作者陈述的来源类别与是否经过核验相互独立。" }
+        }],
+        "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "即使标为作者明确提出，仍需要核对原文。" }
+      },
+      {
+        "id": "limitation-ai-cold-start",
+        "description": "新发表、引用关系稀少的论文可能受到不利影响（模拟 AI 推断）。",
+        "sourceType": "ai_inferred",
+        "source": "根据 3.1 方法描述提出的假设；不是作者原话。",
+        "impact": "新论文的检索召回率可能降低，尚未得到实验验证。",
+        "improvement": "按论文发表时间分层评估，并增加纯关键词检索的补偿项。",
+        "reasoning": "引用邻域较少可能影响依赖图结构的排序。但该结论尚需冷启动实验检验，不能直接视为论文已证实的缺陷。",
+        "evidence": [{
+          "id": "evidence-ai-context",
+          "quote": "【虚构原文】候选论文的排序使用其引用邻域的相关程度。",
+          "relation": "context",
+          "location": { "pdfPage": 3, "printedPage": "3", "section": "3.1 检索方法", "locator": "第 3 段" },
+          "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "这段原文只提供推断上下文，不表明作者提出了冷启动缺陷。" }
+        }],
+        "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "模拟 AI 推断记录；本阶段没有调用任何 AI。" }
+      },
+      {
+        "id": "limitation-reader-scale",
+        "description": "读者提出：需要进一步了解索引在更大规模下的维护成本。",
+        "sourceType": "reader_inferred",
+        "source": "个人阅读问题（示例）",
+        "impact": "目前不能判断方法在持续增长的资料库中的维护开销。",
+        "improvement": "补充增量更新与规模扩展实验。",
+        "reasoning": "这是读者希望进一步核实的问题，暂未找到可逐字引用的原文证据，不能作为作者明确承认的局限性。",
+        "evidence": [],
+        "verification": { "status": "unverified", "reviewedBy": null, "reviewedAt": null, "note": "未知证据保持为空，不伪造页码。" }
+      }
+    ]
+  },
+  "notes": [{
+    "id": "note-demo-reading",
+    "content": "本文件中的论文、引文、页码、指标和核验记录均为虚构示例。下一步可验证 JSON 导入预览与字段映射，但不能把这些内容导入为真实科研结论。",
+    "format": "plain_text",
+    "createdAt": "2026-10-31T01:00:00Z",
+    "updatedAt": "2026-10-31T02:10:00Z"
+  }],
+  "provenance": {
+    "kind": "example",
+    "generator": "ResearchFlow schema fixture",
+    "model": null,
+    "note": "手工编写的虚构数据契约样例。不存在对应 PDF，也未执行 PDF 解析或 AI 调用。示例中的 ai_inferred 只演示分类。"
+  },
+  "createdAt": "2026-10-31T01:00:00Z",
+  "updatedAt": "2026-10-31T02:10:00Z"
+}

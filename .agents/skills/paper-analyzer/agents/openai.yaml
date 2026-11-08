@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Analyzer"
+  short_description: "读取论文 PDF，生成含原文证据与核验状态的 ResearchFlow 分析 JSON"
+  default_prompt: "$paper-analyzer 分析 papers/论文文件名.pdf，生成可导入 ResearchFlow 的 JSON 和中文核验清单。"

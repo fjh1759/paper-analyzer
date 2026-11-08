@@ -1,0 +1,12 @@
+node_modules/
+.qa/
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+papers/
+*.[pP][dD][fF]
+analysis/results/*
+!analysis/results/paper-analysis.example.json
+
